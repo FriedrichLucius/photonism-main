@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фотонизм</title>
+<meta name="description" content="Фотонизм. Спецификация. Источник истины для всех публикаций.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Newsreader:opsz,wght,ital@6..72,300..600,0;6..72,300..600,1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0e;
+  --bg-elev:#101015;
+  --text:#ece8df;
+  --muted:#9a948a;
+  --accent:#d4a574;
+  --accent-muted:#6b4f33;
+  --border:#2a2a36;
+  --serif-display:'Fraunces',Georgia,serif;
+  --serif-body:'Newsreader',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--serif-body);
+  font-size:18px;
+  line-height:1.7;
+  font-weight:380;
+  overflow-x:hidden;
+  font-feature-settings:"kern" 1,"liga" 1,"onum" 1;
+}
+::selection{background:var(--accent-muted);color:var(--text)}
+
+/* Scroll progress */
+.progress{
+  position:fixed;top:0;left:0;height:1px;width:0;
+  background:var(--accent);z-index:100;
+  transition:width 80ms linear;
+}
+
+/* Layout */
+.shell{max-width:760px;margin:0 auto;padding:0 32px}
+.wide{max-width:1080px;margin:0 auto;padding:0 32px}
+
+/* Hero */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  overflow:hidden;
+  padding:80px 32px;
+  border-bottom:1px solid var(--border);
+}
+.interference{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212,165,116,0.10), transparent 70%),
+    repeating-linear-gradient(90deg,
+      transparent 0,transparent 28px,
+      rgba(212,165,116,0.045) 28px,rgba(212,165,116,0.045) 30px,
+      transparent 30px,transparent 62px,
+      rgba(212,165,116,0.085) 62px,rgba(212,165,116,0.085) 64px,
+      transparent 64px,transparent 102px,
+      rgba(212,165,116,0.06) 102px,rgba(212,165,116,0.06) 104px,
+      transparent 104px,transparent 152px,
+      rgba(212,165,116,0.025) 152px,rgba(212,165,116,0.025) 154px,
+      transparent 154px,transparent 210px);
+  mask-image:radial-gradient(ellipse 70% 90% at 50% 50%, black, transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 90% at 50% 50%, black, transparent 75%);
+  animation:drift 22s ease-in-out infinite;
+  pointer-events:none;
+}
+.interference::after{
+  content:"";position:absolute;inset:-20%;
+  background:repeating-linear-gradient(90deg,
+    transparent 0,transparent 44px,
+    rgba(236,232,223,0.018) 44px,rgba(236,232,223,0.018) 46px,
+    transparent 46px,transparent 88px);
+  mix-blend-mode:screen;
+}
+@keyframes drift{
+  0%,100%{transform:translateX(-2px)}
+  50%{transform:translateX(2px)}
+}
+.glyph{
+  font-family:var(--serif-display);
+  font-size:clamp(120px,18vw,220px);
+  font-weight:300;
+  line-height:1;
+  color:var(--accent);
+  font-style:italic;
+  font-variation-settings:"opsz" 144,"SOFT" 30;
+  letter-spacing:-0.04em;
+  position:relative;z-index:2;
+  text-shadow:0 0 80px rgba(212,165,116,0.15);
+}
+.title{
+  font-family:var(--serif-display);
+  font-size:clamp(48px,7vw,88px);
+  font-weight:300;
+  letter-spacing:0.32em;
+  margin-top:32px;
+  position:relative;z-index:2;
+  font-variation-settings:"opsz" 144;
+}
+.kicker{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:28px;
+  position:relative;z-index:2;
+}
+.lede{
+  font-family:var(--serif-body);
+  font-style:italic;
+  font-size:19px;
+  color:var(--muted);
+  margin-top:18px;
+  max-width:520px;
+  position:relative;z-index:2;
+}
+
+/* Sections */
+section{padding:140px 0;border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+
+.part-no{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  color:var(--accent);
+  display:block;
+  margin-bottom:20px;
+}
+.part-title{
+  font-family:var(--serif-display);
+  font-size:clamp(36px,5vw,56px);
+  font-weight:340;
+  line-height:1.08;
+  letter-spacing:-0.015em;
+  margin-bottom:56px;
+  font-variation-settings:"opsz" 96;
+}
+.part-title em{
+  font-style:italic;
+  color:var(--accent);
+  font-weight:340;
+}
+
+p{margin-bottom:1.3em;font-size:18px}
+p:last-child{margin-bottom:0}
+.muted{color:var(--muted)}
+em{font-style:italic}
+strong{font-weight:520;color:var(--text)}
+code,.mono{font-family:var(--mono);font-size:0.88em;color:var(--accent)}
+
+h3{
+  font-family:var(--serif-display);
+  font-size:24px;
+  font-weight:400;
+  font-style:italic;
+  line-height:1.3;
+  letter-spacing:-0.005em;
+  margin:60px 0 22px;
+  color:var(--text);
+}
+
+/* Lists for "не является" cards */
+.not-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-top:40px;
+}
+.not-card{
+  background:var(--bg);
+  padding:36px 32px;
+}
+.not-card h4{
+  font-family:var(--serif-display);
+  font-style:italic;
+  font-size:22px;
+  font-weight:400;
+  color:var(--accent);
+  margin-bottom:16px;
+}
+.not-card p{font-size:16px;line-height:1.65;color:var(--muted)}
+
+/* Q&A */
+.qa{
+  border-top:1px solid var(--border);
+  padding:36px 0;
+}
+.qa:last-child{border-bottom:1px solid var(--border)}
+.qa-label{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--accent-muted);
+  display:block;
+  margin-bottom:10px;
+}
+.qa-q{
+  font-family:var(--serif-display);
+  font-style:italic;
+  font-size:21px;
+  font-weight:380;
+  line-height:1.4;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+.qa-a{font-size:17px;line-height:1.7}
+
+/* Tables */
+.tbl-wrap{
+  margin:32px 0 12px;
+  border:1px solid var(--border);
+  overflow-x:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:15px;
+}
+th,td{
+  text-align:left;
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+th{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:500;
+  background:var(--bg-elev);
+}
+tr:last-child td{border-bottom:none}
+td:first-child{color:var(--muted);font-style:italic}
+td:last-child{color:var(--text)}
+td.sw{
+  width:28px;padding:14px 12px;
+}
+.swatch{
+  display:inline-block;width:18px;height:18px;
+  border:1px solid var(--border);vertical-align:middle;
+}
+
+/* Bullet lists */
+ul{list-style:none;margin:18px 0 24px}
+ul li{
+  position:relative;
+  padding-left:22px;
+  margin-bottom:10px;
+  font-size:17px;
+}
+ul li::before{
+  content:"";
+  position:absolute;
+  left:0;top:0.78em;
+  width:8px;height:1px;
+  background:var(--accent);
+}
+
+/* Two-slit visualization */
+.figure{
+  margin:48px 0 24px;
+  padding:36px 24px;
+  border:1px solid var(--border);
+  background:var(--bg-elev);
+}
+.figure svg{display:block;width:100%;max-width:640px;margin:0 auto;height:auto}
+.figure .caption{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-align:center;
+  margin-top:24px;
+}
+@keyframes wave1{
+  0%{r:0;opacity:0}
+  20%{opacity:0.5}
+  100%{r:200;opacity:0}
+}
+@keyframes wave2{
+  0%{r:0;opacity:0}
+  20%{opacity:0.5}
+  100%{r:200;opacity:0}
+}
+.wave-a circle{animation:wave1 4s linear infinite}
+.wave-a circle:nth-child(2){animation-delay:1s}
+.wave-a circle:nth-child(3){animation-delay:2s}
+.wave-a circle:nth-child(4){animation-delay:3s}
+.wave-b circle{animation:wave2 4s linear infinite}
+.wave-b circle:nth-child(2){animation-delay:1s}
+.wave-b circle:nth-child(3){animation-delay:2s}
+.wave-b circle:nth-child(4){animation-delay:3s}
+
+/* Closing */
+.closing{
+  padding:120px 0 160px;
+  text-align:left;
+  border-top:1px solid var(--border);
+  background:var(--bg-elev);
+}
+.closing p{color:var(--muted);font-size:17px;font-style:italic}
+.colophon{
+  margin-top:80px;
+  padding-top:32px;
+  border-top:1px solid var(--border);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+
+/* Mobile */
+@media (max-width:680px){
+  body{font-size:17px}
+  .shell,.wide{padding:0 22px}
+  section{padding:96px 0}
+  .part-title{margin-bottom:36px}
+  .not-grid{grid-template-columns:1fr}
+  .glyph{text-shadow:0 0 40px rgba(212,165,116,0.15)}
+  th,td{padding:12px 14px;font-size:14px}
+  th{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="hero">
+  <div class="interference"></div>
+  <div class="glyph">Φ</div>
+  <h1 class="title">ФОТОНИЗМ</h1>
+  <div class="kicker">Спецификация</div>
+  <p class="lede">Источник истины для всех публикаций.</p>
+</header>
+
+<main>
+
+<section class="shell" id="preamble">
+  <span class="part-no">Преамбула</span>
+  <p>Этот документ содержит только то, что было разработано в исходных обсуждениях. Никакой дополнительной аппаратной надстройки, никаких изобретённых формализмов, никаких прикладываемых сверху рамок.</p>
+  <p>Документ — рабочая база для последующих публикаций. Его задача: удерживать содержание фотонизма от размывания при разработке материалов.</p>
+</section>
+
+<section class="shell" id="part-1">
+  <span class="part-no">Часть I</span>
+  <h2 class="part-title">Что такое <em>фотонизм</em></h2>
+  <p>Фотонизм — отсутствие коммитментов. Действие производится через вероятностные ставки: из доступных вариантов выбирается более вероятный по имеющимся данным. Ключевое — постоянное понимание, что любая ставка может быть полностью ложью, как и всё остальное.</p>
+  <p>Коммитмент здесь — категорическое эпистемическое состояние, удерживаемое без активного понимания, что оно может быть полностью ложным. Обыденная речь маркирует такие состояния специфическими предикатами (полный перечень и стандартные замены — Часть&nbsp;VI). Эти состояния идентифицируются как когнитивные искажения и подлежат ликвидации. На их место приходит работа со ставками: каждое эпистемическое состояние существует как оценённая по данным вероятность, открытая к пересмотру.</p>
+  <p>Это не атеизм в обычном смысле (атеизм — категорическое утверждение о несуществовании богов с высокой <span class="mono">credence</span>). Фотонизм устроен глубже: это полное отсутствие коммитментов по любому вопросу.</p>
+  <p>Это не коммитмент. Утверждение «фотонизм — корректная позиция» само является ставкой с конечной вероятностью оказаться ложным. Принцип применяется к самому себе.</p>
+</section>
+
+<section class="shell" id="part-2">
+  <span class="part-no">Часть II</span>
+  <h2 class="part-title">Применение к гипотезам <em>о существовании богов</em></h2>
+  <p>Вероятность существования богов в фотонистской рамке считается по имеющимся данным. Из всех данных, что есть, ничто не указывает даже на гипотетическое существование, не то что на что-то выше уровня гипотезы.</p>
+  <p>Феномены, обычно приводимые как свидетельства существования богов и «магических божественных штук», объясняются работой эволюционно-старых частей мозга. Сюда относится магическое мышление — общий механизм, при котором мозг приписывает агентность и замысел случайным или природным процессам.</p>
+  <p>Поскольку механизмы, порождающие соответствующие интуиции, известны и не отслеживают истину, наличие отдельной «настоящей» причины этих интуиций становится излишним предположением. Гипотеза о богах не входит в пространство кандидатов на ненулевую вероятность.</p>
+</section>
+
+<section class="shell" id="part-3">
+  <span class="part-no">Часть III</span>
+  <h2 class="part-title"><em>Имя</em></h2>
+  <p>Фотонизм — от «фотон». Фотон — термин из квантовой физики; до момента измерения его поведение описывается распределением вероятностей по возможным состояниям, а не одним конкретным значением.</p>
+  <p>Метафора структурная: фотонистская работа со знанием устроена так же — эпистемические состояния существуют как распределения вероятностей до того момента, как данные вынудят однозначный ответ. Метафора не претендует на физическое тождество: эпистемические состояния не подчиняются волновому уравнению.</p>
+
+  <div class="figure" aria-label="Двухщелевая визуализация">
+    <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Двухщелевая интерференционная картина">
+      <defs>
+        <linearGradient id="fringe" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#d4a574" stop-opacity="0"/>
+          <stop offset="0.5" stop-color="#d4a574" stop-opacity="1"/>
+          <stop offset="1" stop-color="#d4a574" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- source -->
+      <circle cx="40" cy="140" r="3" fill="#d4a574"/>
+      <text x="40" y="172" fill="#9a948a" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" letter-spacing="1.5">SOURCE</text>
+
+      <!-- barrier with two slits -->
+      <line x1="240" y1="20" x2="240" y2="120" stroke="#ece8df" stroke-width="1.2"/>
+      <line x1="240" y1="135" x2="240" y2="145" stroke="#ece8df" stroke-width="1.2"/>
+      <line x1="240" y1="160" x2="240" y2="260" stroke="#ece8df" stroke-width="1.2"/>
+      <text x="240" y="276" fill="#9a948a" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle" letter-spacing="1.5">SLITS</text>
+
+      <!-- waves from source -->
+      <g stroke="#6b4f33" fill="none" stroke-width="0.6" opacity="0.5">
+        <path d="M 80 140 A 40 40 0 0 1 80 140"/>
+        <circle cx="40" cy="140" r="60"/>
+        <circle cx="40" cy="140" r="100"/>
+        <circle cx="40" cy="140" r="140"/>
+        <circle cx="40" cy="140" r="180"/>
+      </g>
+
+      <!-- waves from slit A -->
+      <g class="wave-a" stroke="#d4a574" fill="none" stroke-width="0.6" opacity="0.55">
+        <circle cx="240" cy="127" r="0"/>
+        <circle cx="240" cy="127" r="0"/>
+        <circle cx="240" cy="127" r="0"/>
+        <circle cx="240" cy="127" r="0"/>
+      </g>
+      <!-- waves from slit B -->
+      <g class="wave-b" stroke="#d4a574" fill="none" stroke-width="0.6" opacity="0.55">
+        <circle cx="240" cy="153" r="0"/>
+        <circle cx="240" cy="153" r="0"/>
+        <circle cx="240" cy="153" r="0"/>
+        <circle cx="240" cy="153" r="0"/>
+      </g>
+
+      <!-- detection screen with interference fringes -->
+      <line x1="560" y1="20" x2="560" y2="260" stroke="#2a2a36" stroke-width="1"/>
+      <g>
+        <rect x="556" y="40" width="8" height="14" fill="#d4a574" opacity="0.18"/>
+        <rect x="556" y="60" width="8" height="22" fill="#d4a574" opacity="0.42"/>
+        <rect x="556" y="88" width="8" height="30" fill="#d4a574" opacity="0.72"/>
+        <rect x="556" y="124" width="8" height="38" fill="#d4a574" opacity="1"/>
+        <rect x="556" y="168" width="8" height="30" fill="#d4a574" opacity="0.72"/>
+        <rect x="556" y="204" width="8" height="22" fill="#d4a574" opacity="0.42"/>
+        <rect x="556" y="232" width="8" height="14" fill="#d4a574" opacity="0.18"/>
+      </g>
+      <text x="585" y="144" fill="#9a948a" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1.5">SCREEN</text>
+    </svg>
+    <div class="caption">Распределение до измерения — не одно конкретное значение</div>
+  </div>
+
+  <p>Готовый ответ на возможные обвинения в quantum-mysticism: метафорическое использование, указывает на структурное сходство, не на онтологическое единство сознания и квантовой механики.</p>
+</section>
+
+<section class="shell" id="part-4">
+  <span class="part-no">Часть IV</span>
+  <h2 class="part-title">Чем фотонизм <em>не является</em></h2>
+
+  <div class="not-grid">
+    <div class="not-card">
+      <h4>Не атеизмом</h4>
+      <p>Атеизм — конкретное категорическое утверждение о несуществовании богов с высокой credence. Фотонизм — общий режим работы со знанием, в котором гипотеза о богах не получает credence по структурным причинам. Атеизм — частный возможный исход работы фотонизма по конкретному вопросу, не сам фотонизм.</p>
+    </div>
+    <div class="not-card">
+      <h4>Не коммитментом</h4>
+      <p>Главное структурное отличие. Фотонизм — отсутствие коммитментов как класса состояний, а не альтернативный набор коммитментов. Утверждение «фотонизм корректен» — ставка, не коммитмент.</p>
+    </div>
+    <div class="not-card">
+      <h4>Не движением</h4>
+      <p>Без членства, без манифестов, без флагов, без идентификации. Превращение в движение запустило бы те же механизмы (формирование коллективной идентичности с защитой от противоречащих данных), против которых направлена практика.</p>
+    </div>
+    <div class="not-card">
+      <h4>Не идеологией</h4>
+      <p>Идеология подразумевает совокупность утверждений о том, как устроен мир, удерживаемых как коммитменты. Фотонизм — режим работы с любыми утверждениями, не сами утверждения.</p>
+    </div>
+  </div>
+</section>
+
+<section class="shell" id="part-5">
+  <span class="part-no">Часть V</span>
+  <h2 class="part-title">Возражения <em>и ответы</em></h2>
+  <p class="muted" style="margin-bottom:48px;font-style:italic">Десять ответов сформулированы из исходного материала фотонизма как защита от типичных атак. Вопросы воспроизводят голос внешнего критика; ответы — фотонистский голос.</p>
+
+  <div class="qa">
+    <span class="qa-label">01 / Возражение</span>
+    <p class="qa-q">Самопротиворечивость: позиция отвергает целый класс эпистемических состояний — но сама не относится ли к этому классу?</p>
+    <p class="qa-a">Принцип «всё может быть полностью ложным» применяется и к самому принципу. Утверждение фотонизма — ставка с конечной вероятностью оказаться ложной. Цикл не разрывается, а замыкается рекурсивно: позиция последовательна именно в том, что применяет своё правило к себе.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">02 / Возражение</span>
+    <p class="qa-q">«Нет данных за» не равно «вероятность ничтожна» — это формальная ошибка.</p>
+    <p class="qa-a">Этот переход в позиции и не делается. Ход более сильный: гипотеза о богах не достигает уровня кандидата в пространстве гипотез, потому что ничего не указывает даже на гипотетическое существование. Это не оценка низкой вероятности гипотезы; это констатация, что гипотезы как таковой нет.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">03 / Возражение</span>
+    <p class="qa-q">Genetic fallacy: объяснить происхождение через мозг не значит опровергнуть содержание.</p>
+    <p class="qa-a">Это не аргумент «объясняется мозгом → ложно». Аргумент конкретнее: явление полностью объясняется известными механизмами, не отслеживающими истину — эволюционно-старыми частями мозга и магическим мышлением. Это локальный шаг про конкретные механизмы с известными свойствами не-истинностной природы, не общая редукция.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">04 / Возражение</span>
+    <p class="qa-q">Откуда берутся приоры, если всё «из данных»? Бесконечный регресс.</p>
+    <p class="qa-a">Из тех же данных, что и всё остальное, и сами они тоже ставки. Привилегированного слоя приоров, не подлежащих пересмотру, в фотонизме нет. Любое допущение — само ставка, открытая к пересмотру при поступлении данных более глубокого уровня.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">05 / Возражение</span>
+    <p class="qa-q">Чем ставка с высокой credence отличается от веры? Поведенчески они идентичны.</p>
+    <p class="qa-a">Разница в том, что было названо ключевым: при ставке всегда поддерживается понимание, что это может быть полностью ложью. При коммитменте это понимание подавлено. Поведение в спокойных условиях идентично; различие проявляется при поступлении противоречащих данных. Коммитмент сопротивляется пересмотру, ставка обновляется.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">06 / Возражение</span>
+    <p class="qa-q">Мозг и так работает байесиански. Зачем сознательная надстройка?</p>
+    <p class="qa-a">Базовая нейронная байесианская обработка — союзник позиции, не противник. Ликвидируется именно высокоуровневое сознательное состояние коммитмента, которое добавляется поверх вероятностной обработки и порождает ригидность, защитные реакции, идентификацию с коммитментами. Базовая архитектура не противоречит, надстройка — да.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">07 / Возражение</span>
+    <p class="qa-q">Не превращается ли фотонизм в идентичность («я фотонист»)? Это противоречит позиции.</p>
+    <p class="qa-a">Тот же ход, что в первом возражении. Если у человека образуется идентичность «я фотонист» или похожая — это новая ставка, к которой применяется тот же принцип: она тоже может быть полностью ложной. Защитный механизм встроен через рекурсию.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">08 / Возражение</span>
+    <p class="qa-q">Доверие — основа социальной кооперации. Без него человек проиграет эволюционно.</p>
+    <p class="qa-a">Tit-for-tat и другие кооперативные стратегии не требуют коммитмента к кооперативности партнёра. Они требуют ставки на неё с конечной credence и действия по этой ставке с обновлением по результату. Эволюционно успешные стратегии работают именно в этом режиме; перевод обыденного коммитмента к источнику в высокую credence + готовность обновиться не теряет ни одной стратегии.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">09 / Возражение</span>
+    <p class="qa-q">Как проверить, что человек действительно в фотонистском режиме, а не в его иллюзии?</p>
+    <p class="qa-a">Через поведение в момент противоречащих данных, не через интроспекцию. Надёжные признаки: скорость и амплитуда обновления credence; отсутствие защитных реакций на источник противоречащих данных; способность сформулировать заранее, какие именно данные обрушили бы текущую ставку.</p>
+  </div>
+
+  <div class="qa">
+    <span class="qa-label">10 / Возражение</span>
+    <p class="qa-q">Что входит в ликвидируемый набор? Только то, что перечислено в Части VI, или больше?</p>
+    <p class="qa-a">Критерий не перечислительный, а операциональный: ликвидируется любое когнитивное состояние, работающее без активного поддержания понимания, что оно может быть полностью ложным. Состояния, перечисленные в Части VI, — самые часто встречающиеся представители этого класса; набор открыт.</p>
+  </div>
+</section>
+
+<section class="shell" id="part-6">
+  <span class="part-no">Часть VI</span>
+  <h2 class="part-title">Языковые <em>ограничения</em></h2>
+  <p><strong>Критично для всех публикаций.</strong> Эта часть — спецификация; её содержание метаязыковое: называет и каталогизирует объекты ликвидации. Само наличие в ней соответствующих слов нарушением не является.</p>
+
+  <h3>6.1 Запрещённые корни</h3>
+  <p>В фотонистской речи не должны появляться:</p>
+  <ul>
+    <li><span class="mono">определ-</span> (определение, определить, определённость, определённый и любые формы)</li>
+    <li><span class="mono">детерм-</span> (детерминизм и производные)</li>
+  </ul>
+  <p>Эти корни связаны с детерминистскими ассоциациями. Замена обязательна.</p>
+
+  <h3>6.2 Слова к ликвидации</h3>
+  <p>Эпистемические предикаты обыденной речи, маркирующие коммитменты, в фотонистской речи не используются:</p>
+  <ul>
+    <li>«вера, верить, верующий, верование»</li>
+    <li>«доверие, доверять»</li>
+    <li>«уверенность, уверен, уверенно»</li>
+    <li>«убеждение» (в смысле «вера»), «убеждать» (в смысле «склонять других»)</li>
+  </ul>
+
+  <h3>6.3 Допустимые контексты для упоминаний</h3>
+  <p>Перечисленные слова допустимы только в трёх конкретных местах:</p>
+  <ul>
+    <li>В таблице замен — показ старого предиката рядом с новым.</li>
+    <li>В перечислении старых предикатов в кавычках, как объектов операции (например: «считаю, верю, уверен — подлежат замене»).</li>
+    <li>В возражениях критиков, явно маркированных как внешний голос (Часть V, формат вопроса).</li>
+  </ul>
+
+  <h3>6.4 Стандартные замены</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Старая форма</th><th>Замена</th></tr></thead>
+      <tbody>
+        <tr><td>определение</td><td>формулировка, сущность, идентификация</td></tr>
+        <tr><td>определить</td><td>идентифицировать</td></tr>
+        <tr><td>определённость</td><td>однозначность, категоричность</td></tr>
+        <tr><td>определённое значение</td><td>одно конкретное значение</td></tr>
+        <tr><td>«вера / верить»</td><td>коммитмент / держать коммитмент</td></tr>
+        <tr><td>«доверие»</td><td>ставка с конечной credence</td></tr>
+        <tr><td>«уверенность»</td><td>высокая credence, категоричность</td></tr>
+        <tr><td>«убеждение» (как вера)</td><td>коммитмент</td></tr>
+        <tr><td>«убеждать» других</td><td>склонять, приобщать</td></tr>
+        <tr><td>«я считаю, что P»</td><td>credence в P оценивается как c</td></tr>
+        <tr><td>«я уверен в этом»</td><td>ставлю на это с высокой credence</td></tr>
+        <tr><td>«это правда»</td><td>это поддержано данными</td></tr>
+        <tr><td>«это доказано»</td><td>это устойчиво к опровержению</td></tr>
+        <tr><td>«я доверяю X»</td><td>ставлю на X с credence c, обновится при D′</td></tr>
+        <tr><td>«я знаю, что P»</td><td>credence близок к 1, остаётся ниже 1</td></tr>
+        <tr><td>«это невозможно»</td><td>credence близок к 0, остаётся выше 0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.5 Допустимая терминология</h3>
+  <ul>
+    <li><span class="mono">ставка</span> — центральный термин</li>
+    <li><span class="mono">credence</span> — английское, оставлено как технический термин (вероятностная оценка)</li>
+    <li><span class="mono">коммитмент</span> — для обозначения противоположного режима</li>
+    <li><span class="mono">категорическое эпистемическое состояние</span> — расширенный синоним коммитмента</li>
+    <li><span class="mono">идентифицировать</span> — замена «определять»</li>
+    <li><span class="mono">однозначность</span> — замена «определённости»</li>
+  </ul>
+</section>
+
+<section class="shell" id="part-7">
+  <span class="part-no">Часть VII</span>
+  <h2 class="part-title">Эстетика <em>для публикаций</em></h2>
+  <p>Минимально необходимое для согласованности будущих материалов с содержанием фотонизма.</p>
+
+  <h3>7.1 Голос (тон)</h3>
+  <ul>
+    <li>Третье лицо, безличные конструкции</li>
+    <li>Прямой, технический регистр без пафоса</li>
+    <li>Без эпиграфов, философских афоризмов, публицистических фраз</li>
+    <li>Без обращений к читателю, без призывов к действию</li>
+    <li>Без миссионерской риторики</li>
+  </ul>
+
+  <h3>7.2 Запрещённые элементы</h3>
+  <ul>
+    <li>Интерактивные виджеты (конвертеры, тренажёры, тесты, квизы)</li>
+    <li>Эпиграфы, пулл-цитаты с философскими афоризмами</li>
+    <li>Слоганы, манифесты</li>
+    <li>Призывы к вступлению, членству, подписке</li>
+    <li>Эмодзи</li>
+    <li>Любая «движенческая» риторика</li>
+  </ul>
+
+  <h3>7.3 Цветовая палитра</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th></th><th>Назначение</th><th>Значение</th></tr></thead>
+      <tbody>
+        <tr><td class="sw"><span class="swatch" style="background:#0a0a0e"></span></td><td>Фон основной</td><td><span class="mono">#0a0a0e</span></td></tr>
+        <tr><td class="sw"><span class="swatch" style="background:#ece8df"></span></td><td>Текст основной</td><td><span class="mono">#ece8df</span></td></tr>
+        <tr><td class="sw"><span class="swatch" style="background:#9a948a"></span></td><td>Текст приглушённый</td><td><span class="mono">#9a948a</span></td></tr>
+        <tr><td class="sw"><span class="swatch" style="background:#d4a574"></span></td><td>Акцент</td><td><span class="mono">#d4a574</span></td></tr>
+        <tr><td class="sw"><span class="swatch" style="background:#6b4f33"></span></td><td>Акцент приглушённый</td><td><span class="mono">#6b4f33</span></td></tr>
+        <tr><td class="sw"><span class="swatch" style="background:#2a2a36"></span></td><td>Граница</td><td><span class="mono">#2a2a36</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>7.4 Шрифты</h3>
+  <ul>
+    <li><span style="font-family:var(--serif-display);font-style:italic;font-size:20px;color:var(--accent)">Display: Fraunces</span> (вариативный сериф) — заголовки</li>
+    <li><span style="font-family:var(--serif-body);font-size:18px">Body: Newsreader</span> (редакционный сериф) — основной текст</li>
+    <li><span class="mono" style="font-size:16px">Mono: JetBrains Mono</span> — технические элементы, нотация</li>
+  </ul>
+  <p class="muted" style="font-size:16px">Не использовать Inter, Roboto и подобные tech-стартап шрифты.</p>
+
+  <h3>7.5 Допустимые визуальные элементы</h3>
+  <ul>
+    <li>Двухщелевая визуализация (физическая иллюстрация аналогии с фотоном)</li>
+    <li>Интерференционная картина в hero (анимированный фон)</li>
+    <li>Структурированные таблицы (предикаты, замены и т.п.)</li>
+    <li>Минималистский прогресс-бар скролла</li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="closing">
+  <div class="shell">
+    <span class="part-no">Заключительное примечание</span>
+    <p>Этот документ содержит только то, что было разработано в исходных обсуждениях. Если в нём обнаруживаются недостаточные или неточные формулировки — они уточняются прямой коррекцией, не дополнительной надстройкой.</p>
+    <p>При создании публикаций используется проверка по двум осям: соответствие содержанию (Части&nbsp;I–V) и соответствие форме (Части&nbsp;VI,&nbsp;VII).</p>
+    <div class="colophon">
+      <span>Φ — Спецификация</span>
+      <span>Источник истины</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var bar=document.getElementById('progress');
+  function update(){
+    var h=document.documentElement;
+    var max=h.scrollHeight-h.clientHeight;
+    var pct=max>0?(h.scrollTop/max)*100:0;
+    bar.style.width=pct+'%';
+  }
+  document.addEventListener('scroll',update,{passive:true});
+  update();
+})();
+</script>
+
+</body>
+</html>
